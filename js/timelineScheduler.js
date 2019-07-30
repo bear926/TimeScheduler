@@ -632,12 +632,27 @@
                                 event = item.events[ev];
 
                                 eventDiff = (event.at.diff(foundStart, 'minutes') / itemSelfDiff) * 100;
-
+                                var eventDiffEnd = (event.end.diff(foundStart, 'minutes') / itemSelfDiff) * 100;
+                                var eventWidth = eventDiffEnd - eventDiff;
+                                var eventTitle = '(' + event.at.format(self.Options.LowerFormat) + ' - ' + event.end.format(self.Options.LowerFormat) + ') ' + event.label;
                                 $(document.createElement('div'))
                                     .addClass('time-sch-item-event ' + (event.classes || ''))
-                                    .css('left', eventDiff + '%')
-                                    .attr('title', event.at.format(self.Options.LowerFormat) + ' - ' + event.label)
+                                    .css({
+                                      'left' : eventDiff + '%',
+                                      'width' : eventWidth + '%',
+                                      'overflow' : 'hidden'
+                                    })
+                                    .attr('title', eventTitle)
                                     .data('event', event)
+                                    .html(
+                                      $(document.createElement('div'))
+                                        .addClass('time-sch-item-event-content')
+                                        .css({
+                                          'left' :  calcLeft  + '%',
+                                          'overflow' : 'hidden'
+                                        })
+                                        .html(event.label)
+                                    )
                                     .appendTo(itemElem);
                             }
                         }
@@ -675,7 +690,6 @@
                     }
                 }
             }
-
             // Sort out layout issues so no elements overlap
             for (prop in inSection) {
                 section = self.Sections[prop];
